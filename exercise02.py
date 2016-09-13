@@ -20,3 +20,21 @@ for line in range(len(f_list)):
 f_str = ''.join(f_list)
 
 print(f_str[:100])
+
+def gc_content(seq):
+    """computes GC content"""
+    return (seq.count('C') + seq.count('G') / len(seq))
+
+
+def gc_blocks(seq, block_size):
+    """computes GC content of a sequence within a given block size"""
+
+    total_block_number = len(seq) // block_size
+
+    block = 0
+    GC_tuple = ()
+    while block < total_block_number:
+        GC_tuple += (gc_content(seq[block:block + block_size]),)
+        block += 1
+
+    return GC_tuple
