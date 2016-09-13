@@ -3,7 +3,7 @@
 with open('data/salmonella_spi1_region.fna', 'r') as f:
     counter = 0
 
-    #skip the first two lines of the file
+    #skip the first line of the file
     while counter < 1:
         f.readline()
         counter += 1
@@ -66,3 +66,44 @@ with open('data/salmonella_spi1_region.fna', 'r') as f, open('pathogenicity_isla
         f_out.write('\n')
         counter = i + 61
     f_out.write(f_str[counter:])
+
+
+def is_stop_codon(seq):
+    if seq == 'TGA' or seq == 'TAG' or seq == 'TAA':
+        return True
+    else:
+        return False
+
+
+def seq_is_multiple_three(seq):
+    if len(seq) % 3 == 0:
+        return True
+    else:
+        return False
+
+
+def count_stop_codons(seq):
+    """counts the number of stop codons in a given sequence, that are in frame
+    with the beginning codon of the sequence"""
+    num_codons = len(seq) // 3
+
+    counter = 0
+
+    for codon in range(num_codons):
+        if seq[codon*3:codon*3 + 3] == 'TGA' or seq[codon*3:codon*3 + 3] == 'TAG' or seq[codon*3:codon*3 + 3] == 'TAA':
+            counter += 1
+    return counter
+
+
+def longest_orf(seq):
+
+    orf_len = len(seq)
+
+    while orf_len > 0:
+        for i in range(len(seq) - orf_len + 1):
+            if seq[i:i+3] == 'ATG' and is_stop_codon(seq[i+orf_len-3:i+orf_len]) == True and seq_is_multiple_three(seq[i:i+orf_len]) == True:
+                if count_stop_codons(seq[i:orf_len]) < 2:
+                    return seq[i:i+orf_len]
+                else:
+                    break
+        orf_len -= 1
